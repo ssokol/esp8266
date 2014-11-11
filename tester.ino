@@ -80,10 +80,6 @@ void setup() {
   
   rs232.println(F("Wifi initialized"));
   
-  char buf[255];
-  wifi.scan(buf, 255);
-  rs232.println(buf);
-/*  
   // connect the module to the provided SSID
   ret = wifi.connectWifi(ssid, password);
   if (ret != WIFI_ERR_NONE) {
