@@ -256,6 +256,9 @@ Boolean. True = success - beacon enabled. False = failure.
 **Example:**
 
 	boot ret = myWifi.enableBeacon("MyWeatherStation");
+	
+	// sample beacon packet:
+	{"event": "beacon", "ip": "10.0.1.85", "port": 80, "device": "foobar123"}
 
 ### [send()](id:section-reference-send)
 
