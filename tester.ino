@@ -4,12 +4,15 @@
 #include "EEPROMAnything.h"
 #include "ESP8266.h"
 
+// CHANGE THIS TO 2 TO SEE MOST OF THE OUTPUT FROM THE LIBRARY
+#define DEBUG_LEVEL 0
+
 // DO NOT try to use the default SoftSerial it WILL NOT work
 AltSoftSerial softSerial;
 
 // instantiate the wifi object with STA mode and server on port 80 and the baud rate
 // for communicating with the module
-ESP8266 wifi(WIFI_MODE_STA, 38400, 2);
+ESP8266 wifi(WIFI_MODE_STA, 38400, DEBUG_LEVEL);
 
 #define BUFFER_SIZE 255
 #define rs232 softSerial  // alias the software port as 'rs232'
@@ -31,8 +34,13 @@ void setup() {
 
   int ret;
   
+  // Start the AltSoftSerial port at 9600 - can theoretically go as high as 56K
   rs232.begin(9600);
   rs232.println("Starting up WiFi to RS232 Bridge");
+  
+  // THE FOLLOWING CODE READS VALUES FOR ssid, password, etc FROM THE EEPROM
+  // ON AN Arudino Pro Mini. IF YOU DON'T WANT TO MESS WITH THIS, REPLACE IT
+  // WITH SIMPLE STRING LITERALS
   
   // read the SSID from eeprom (up to 48 bytes: 0 to 47)
   char ssid[48];
@@ -52,6 +60,7 @@ void setup() {
   memset(device, 0, 48);
   eepromReadString(74, 48, device);
 
+  // check for empty ssid and password
   if ((ssid[0] <= 0) || (password[0] <= 0)) {
     rs232.println(F("The ID and PASSWORD must be set before you can use this device."));
     rs232.println(F("\tAT+SSID=yourssid"));
@@ -59,10 +68,12 @@ void setup() {
     return;
   }
 
+  // if the port value is zero or -1, use the default
   if (port <= 0) {
     port = 8000;
   }
 
+  // check for empty device name
   if (device[0] <= 0) {
     rs232.println(F("The device ID has not been set. Defaulting to 'wifi-serial'."));
     rs232.println(F("\tAT+DEVICE=device-name"));
@@ -94,7 +105,7 @@ void setup() {
   // start the server
   bool svr = wifi.startServer(80);
   if (svr) {
-    // enables a beacon that can be used for discovery
+    // enables a beacon that can be used for discovery - UDP port 34807
     wifi.enableBeacon(device);
   }
 
@@ -103,7 +114,7 @@ void setup() {
   
   if (wifi.startClient("10.0.1.3", 4040, 1000)) {
     rs232.println("client connected");
-    wifi.send("bazing!"); 
+    wifi.send("bazinga!"); 
   }
 */
 
