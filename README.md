@@ -242,6 +242,12 @@ Boolean. True = success. False = failure.
 
 Enable the UDP beacon which posts a JSON datagram to the broadcast address (see limitations below for caveats) every 10 seconds. JSON datagrams include the IP address and port of the server and the device name provided when the beacon is enabled.
 
+NOTE: the beacon is currently hard-coded to use UDP port 34807. If you want/need to change this, you will need to edit the library code. At some point in the future I will update to make the beacon port configurable.
+
+Beacon frequency is every 10 seconds when no server connections are active. Once a server connection occurrs, the frequency goes to ever 30 seconds.
+
+The beacon makes the assumption that your broadcast address is the same as the IP the module received with the last octet set to 255. This sucks, but since there's no way to get the actual broadcast from the module, that's the best I could do. At some point it should probably be made configurable as well.
+
 **Arguments:**
 
 * device
@@ -255,7 +261,7 @@ Boolean. True = success - beacon enabled. False = failure.
 
 **Example:**
 
-	boot ret = myWifi.enableBeacon("MyWeatherStation");
+	bool ret = myWifi.enableBeacon("MyWeatherStation");
 	
 	// sample beacon packet:
 	{"event": "beacon", "ip": "10.0.1.85", "port": 80, "device": "foobar123"}
